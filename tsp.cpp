@@ -52,7 +52,7 @@ double calc_diff(vector<ll> mn_v, vector<ll> tmp_v, ll i, double pre_score){
 }
 
 vector<ll> kick(vector<ll> v){
-    ll choice_num = 950;
+    ll choice_num = min(ll(N*0.95), N-2);
     if (v.size()<choice_num+2) { return v; }
 
     vector<ll> indexes;
@@ -109,9 +109,9 @@ int main(){
     ll start = now();
     const ll max_iter = 1e7;
 
-    ll c = 0;
-    while (c<=max_iter){
-        c++;
+    ll loop_num = 0;
+    while (loop_num<=max_iter){
+        loop_num++;
         vector<ll> next = next_state(state);
         double cost = calc_all(next);
         if (cost<ans_score){
@@ -119,11 +119,19 @@ int main(){
         }
         state = next;
 
-        // debug
-        if (c%200==0){
+        // 進捗を表示する
+        // if (loop_num%200==0){
+        if (loop_num%200==0 || 1){
             cout << ans_score << endl;
+        }
+
+        // 最適解が出たらbreak
+        if (ans_score==38){
+            break;
         }
     }
 
-    cout << setprecision(8) << ans_score << endl;
+    cout << setprecision(8) << "answer: " << ans_score << endl;
+    cout << "loop num: " << loop_num << endl;
+    cout << "elapsed time: " << now()-start << "ms"  << endl;
 }
