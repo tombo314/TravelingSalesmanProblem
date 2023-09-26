@@ -95,12 +95,14 @@ vector<ll> next_state(vector<ll> v){
 }
 
 int main(){
+    // 入力を受け取る
     cin >> N;
     X.resize(N+1);
     Y.resize(N+1);
     ans_v.resize(N+1);
     rep(i, 0, N) cin >> X[i] >> Y[i];
 
+    // 状態を初期化する
     vector<ll> state(N+1);
     rep(i, 0, N) state[i] = i;
     state[N] = 0;
@@ -121,12 +123,12 @@ int main(){
 
         // 進捗を表示する
         // if (loop_num%200==0){
-        if (loop_num%200==0 || 1){
+        if (loop_num%50==0){
             cout << ans_score << endl;
         }
 
         // 最適解が出たらbreak
-        if (ans_score==38){
+        if (ans_score==(N-1)*2){
             break;
         }
     }
