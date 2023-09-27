@@ -30,6 +30,7 @@ vector<ll> ans_v;
 mt19937 mt(now());
 ll rand(ll n) { return mt()%n; }
 
+// コストを計算する O(N)
 double calc_all(vector<ll> v){
     double cost = 0;
     rep(i, 1, v.size()){
@@ -38,6 +39,7 @@ double calc_all(vector<ll> v){
     return cost;
 }
 
+// 差分更新でコストを計算する O(1)
 double calc_diff(vector<ll> mn_v, vector<ll> tmp_v, ll i, double pre_score){
     double cost = pre_score;
     // 削除
@@ -51,8 +53,9 @@ double calc_diff(vector<ll> mn_v, vector<ll> tmp_v, ll i, double pre_score){
     return cost;
 }
 
+// 局所解から抜け出す（抜け出せているか分からない）
 vector<ll> kick(vector<ll> v){
-    ll choice_num = min(ll(N*0.95), N-2);
+    ll choice_num = N*0.95;
     if (v.size()<choice_num+2) { return v; }
 
     vector<ll> indexes;
@@ -70,16 +73,19 @@ vector<ll> kick(vector<ll> v){
     return v;
 }
 
+// 次の状態を得る
 vector<ll> next_state(vector<ll> v){
     double mn = calc_all(v);
     double init_mn = mn;
     vector<ll> mn_v = v;
 
+    // 2-optする点を全探索する
     rep(i, 1, v.size()-2){
         vector<ll> tmp_v = mn_v;
         ll tmp = tmp_v[i];
         tmp_v[i] = tmp_v[i+1];
         tmp_v[i+1] = tmp;
+        // 差分更新でコストを計算する O(1)
         double cost = calc_diff(mn_v, tmp_v, i, mn);
         if (cost<mn){
             mn = cost;
@@ -87,6 +93,7 @@ vector<ll> next_state(vector<ll> v){
         }
     }
 
+    // 局所解に入っていたら抜け出す（抜け出せているか分からない）
     if (mn==init_mn){
         mn_v = kick(v);
     }
@@ -109,12 +116,16 @@ int main(){
     X[N] = X[0];
     Y[N] = Y[0];
     ll start = now();
-    const ll max_iter = 1e7;
-
     ll loop_num = 0;
+    const ll max_iter = 1e7;
+    const ll correct_ans = (N-1)*2;
+
+    // ILS
     while (loop_num<=max_iter){
         loop_num++;
+        // 状態を更新する
         vector<ll> next = next_state(state);
+        // コストを計算する
         double cost = calc_all(next);
         if (cost<ans_score){
             ans_score = cost;
@@ -122,13 +133,12 @@ int main(){
         state = next;
 
         // 進捗を表示する
-        // if (loop_num%200==0){
-        if (loop_num%50==0){
-            cout << ans_score << endl;
+        if (loop_num%500==0){
+            cout << "now_ans: " << ans_score << " correct_ans: " << correct_ans << endl;
         }
 
         // 最適解が出たらbreak
-        if (ans_score==(N-1)*2){
+        if (ans_score==correct_ans){
             break;
         }
     }
