@@ -67,7 +67,7 @@ int main(){
     double score = calc(state);
     double temp = 1000;
     double ans = inf;
-    const ll max_iter = 1e7;
+    const ll max_iter = 2e7;
 
     ll c = 0;
     while (c<=max_iter){
@@ -89,9 +89,9 @@ int main(){
         temp *= 0.9999992;
 
         // n回ごとにdebugする
-        if (c%ll(1e5)==0){
+        if (c%ll(5e5)==0){
             // cout << temp << endl;
-            cout << "min_score: " << ans << " now_score: " << score << endl;
+            cout << "temp: " << temp << " min_score: " << ans << " now_score: " << score << endl;
         }
     }
 
