@@ -38,15 +38,33 @@ double calc(vector<ll> v){
     return cost;
 }
 
-vector<ll> next_state_rand(vector<ll> v){
-    if (N<=3){
-        return v;
-    }
-    ll r = rand(v.size()-3)+1;
-    ll tmp = v[r];
-    v[r] = v[r+1];
-    v[r+1] = tmp;
+vector<ll> next_state(vector<ll> v, ll i){
+    ll tmp = v[i];
+    v[i] = v[i+1];
+    v[i+1] = tmp;
     return v;
+}
+
+double calc_diff(vector<ll> v, ll i){
+    vector<ll> tmp_v = next_state(v, i);
+    double cost = 0;
+    // 削除
+    ll a = v[i-1];
+    ll b = v[i];
+    ll c = v[i+1];
+    ll d = v[i+2];
+    cost -= sqrt(pow(X[a]-X[b], 2) + pow(Y[a]-Y[b], 2));
+    cost -= sqrt(pow(X[b]-X[c], 2) + pow(Y[b]-Y[c], 2));
+    cost -= sqrt(pow(X[c]-X[d], 2) + pow(Y[c]-Y[d], 2));
+    // 追加
+    a = tmp_v[i-1];
+    b = tmp_v[i];
+    c = tmp_v[i+1];
+    d = tmp_v[i+2];
+    cost += sqrt(pow(X[a]-X[b], 2) + pow(Y[a]-Y[b], 2));
+    cost += sqrt(pow(X[b]-X[c], 2) + pow(Y[b]-Y[c], 2));
+    cost += sqrt(pow(X[c]-X[d], 2) + pow(Y[c]-Y[d], 2));
+    return cost;
 }
 
 double prob(double new_score, double pre_score, double temp){
@@ -65,17 +83,18 @@ int main(){
     rep(i, 0, N) state[i] = i;
     state[N] = 0;
     double score = calc(state);
-    double temp = 1000;
+    double temp = 500;
     double ans = inf;
-    const ll max_iter = 2e7;
+    const ll max_iter = 3e7;
 
     ll c = 0;
     while (c<=max_iter){
         c++;
 
         // 2-optで焼きなまし
-        vector<ll> next = next_state_rand(state);
-        double new_score = calc(next);
+        ll r = rand(N-3)+1;
+        double new_score = score+calc_diff(state, r);
+        vector<ll> next = next_state(state, r);
         ans = min(ans, new_score);
         double p = prob(new_score, score, temp)*100;
 
@@ -86,12 +105,12 @@ int main(){
         }
 
         // 温度関数を更新する
-        temp *= 0.9999992;
+        temp *= 0.9999997;
 
         // n回ごとにdebugする
-        if (c%ll(5e5)==0){
+        if (c%ll(1e6)==0){
             // cout << temp << endl;
-            cout << "temp: " << temp << " min_score: " << ans << " now_score: " << score << endl;
+            cout << "temp: " << temp << " score: " << ans << endl;
         }
     }
 
