@@ -83,9 +83,10 @@ int main(){
     rep(i, 0, N) state[i] = i;
     state[N] = 0;
     double score = calc(state);
-    double temp = 500;
+    double temp = 100;
     double ans = inf;
     const ll max_iter = 3e7;
+    ll start = now();
 
     ll c = 0;
     while (c<=max_iter){
@@ -105,7 +106,7 @@ int main(){
         }
 
         // 温度関数を更新する
-        temp *= 0.9999997;
+        temp *= 0.9999999;
 
         // n回ごとにdebugする
         if (c%ll(1e6)==0){
@@ -116,4 +117,6 @@ int main(){
 
     // 答えを出力する
     cout << setprecision(20) << ans << endl;
+    // 時間を計測
+    cout << now()-start << " ms" << endl;
 }
